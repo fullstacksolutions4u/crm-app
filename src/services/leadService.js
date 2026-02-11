@@ -16,6 +16,17 @@ class LeadService {
          
 
   }
+
+  async generateAnalysis (){
+    let count = 0;
+
+    for(let i=0;i<50000000000;i++){
+      count +=i;
+    }
+
+    return count
+  }
+
 }
 
 export default new LeadService();

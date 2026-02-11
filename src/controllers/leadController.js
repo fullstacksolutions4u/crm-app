@@ -23,3 +23,17 @@ export const getLeads = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getAnalysis = async (req,res)=>{
+  try {
+
+    const count = await leadService.generateAnalysis()
+
+    res.json({message:"Analysis generated",total:count})
+    
+  } catch (error) {
+
+    res.status(400).json(error.message)
+    
+  }
+}
