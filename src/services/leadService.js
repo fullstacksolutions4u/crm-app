@@ -1,5 +1,12 @@
+import { once } from "events";
 import { ResponseLeadDTO } from "../dtos/leadDTO.js";
 import leadRepository from "../repositories/leadRepository.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import {Worker} from "worker_threads"
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class LeadService {
   async createLead(leadData) {
@@ -9,24 +16,24 @@ class LeadService {
   }
 
   async getAllLead() {
+    const leads = await leadRepository.getLead();
 
-       const leads =  await leadRepository.getLead()
-
-       return leads.map(lead=>ResponseLeadDTO(lead))
-         
-
+    return leads.map((lead) => ResponseLeadDTO(lead));
   }
 
-  async generateAnalysis (){
-    let count = 0;
+  async generateAnalysis() {
+    const workerPath = path.resolve(__dirname, "../utils/analyticsworker.js");
 
-    for(let i=0;i<50000000000;i++){
-      count +=i;
+    const worker = new Worker(workerPath);
+
+    try {
+      const data = await once(worker, "message");
+
+      return data;
+    } catch (error) {
+      throw error;
     }
-
-    return count
   }
-
 }
 
 export default new LeadService();
